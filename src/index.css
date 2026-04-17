@@ -1,0 +1,866 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --color-dark-900: #0a0a0f;
+  --color-dark-800: #12121a;
+  --color-dark-700: #1a1a26;
+  --color-dark-600: #242435;
+  --color-dark-500: #2e2e42;
+  --color-dark-400: #3d3d56;
+  --color-accent-blue: #4285f4;
+  --color-accent-green: #34a853;
+  --color-accent-red: #ea4335;
+  --color-accent-yellow: #fbbc05;
+  --color-accent-purple: #8b5cf6;
+  --color-accent-cyan: #06b6d4;
+  --color-glass-white: rgba(255, 255, 255, 0.06);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* ─── Base Styles ───────────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-dark-900);
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar Styling ─────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ─── Glass Card ────────────────────────────────── */
+.glass-card {
+  background: var(--color-glass-white);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 16px;
+}
+
+.glass-card-sm {
+  background: var(--color-glass-white);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 12px;
+}
+
+/* ─── Animations ────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes slideInPanel {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   ROOM LAYOUT
+   ═══════════════════════════════════════════════════ */
+
+.room-layout {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-dark-900);
+  overflow: hidden;
+}
+
+.room-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+}
+
+/* Video area takes all available space, shrinks when chat opens */
+.room-video-area {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Room Header ───────────────────────────────── */
+.room-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(18, 18, 26, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-glass-border);
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .room-header {
+    padding: 10px 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .room-header {
+    padding: 12px 24px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   VIDEO GRID — Responsive & Auto-fitting
+   ═══════════════════════════════════════════════════ */
+
+.video-grid-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .video-grid-wrapper {
+    padding: 8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-grid-wrapper {
+    padding: 12px;
+  }
+}
+
+.video-grid {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (min-width: 640px) {
+  .video-grid {
+    gap: 8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-grid {
+    gap: 10px;
+  }
+}
+
+/* ─── Grid Layout Classes (Desktop defaults) ──── */
+
+/* 1 participant: full screen */
+.video-grid-1 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* 2 participants: side by side */
+.video-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+}
+
+/* 3 participants: 2 top, 1 bottom centered */
+.video-grid-3 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+.video-grid-3 > *:last-child {
+  grid-column: 1 / -1;
+  max-width: 50%;
+  justify-self: center;
+}
+
+/* 4 participants: 2×2 grid */
+.video-grid-4 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+/* 5–6 participants: 3 columns */
+.video-grid-5,
+.video-grid-6 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+/* 7–9 participants: 3×3 grid */
+.video-grid-7,
+.video-grid-8,
+.video-grid-9 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+/* 10+ participants: 4 column grid */
+.video-grid-many {
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+}
+
+/* ─── Mobile overrides (< 640px) ──────────────── */
+@media (max-width: 639px) {
+  .video-grid-1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .video-grid-2 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .video-grid-3 {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+  }
+  .video-grid-3 > *:last-child {
+    grid-column: auto;
+    max-width: 100%;
+    justify-self: auto;
+  }
+
+  .video-grid-4 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .video-grid-5,
+  .video-grid-6 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, 1fr);
+  }
+
+  .video-grid-7,
+  .video-grid-8,
+  .video-grid-9 {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+  }
+
+  .video-grid-many {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+    overflow-y: auto;
+  }
+}
+
+/* ─── Tablet overrides (640px – 1023px) ────────── */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .video-grid-2 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .video-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+  }
+  .video-grid-3 > *:last-child {
+    grid-column: auto;
+    max-width: 100%;
+    justify-self: auto;
+  }
+
+  .video-grid-5,
+  .video-grid-6 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+
+  .video-grid-7,
+  .video-grid-8,
+  .video-grid-9 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+}
+
+/* ─── Video Tile ────────────────────────────────── */
+.video-tile {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-dark-700);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: auto;
+}
+
+@media (min-width: 640px) {
+  .video-tile {
+    border-radius: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-tile {
+    border-radius: 16px;
+  }
+}
+
+.video-tile:hover {
+  box-shadow: 0 0 0 2px var(--color-accent-blue), 0 4px 20px rgba(66, 133, 244, 0.15);
+}
+
+.video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+/* ─── Video Avatar (camera off) ─────────────────── */
+.video-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 640px) {
+  .video-avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 1.4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-avatar {
+    width: 88px;
+    height: 88px;
+    font-size: 1.8rem;
+  }
+}
+
+/* ─── Video Name Overlay ────────────────────────── */
+.video-name-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  padding: 20px 8px 6px;
+  display: flex;
+  align-items: flex-end;
+}
+
+@media (min-width: 640px) {
+  .video-name-overlay {
+    padding: 24px 12px 8px;
+  }
+}
+
+.video-name-text {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 640px) {
+  .video-name-text {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-name-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* ─── Video Status Badges ───────────────────────── */
+.video-status-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(234, 67, 53, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+@media (min-width: 640px) {
+  .video-status-badge {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   CONTROLS BAR
+   ═══════════════════════════════════════════════════ */
+
+.controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(18, 18, 26, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--color-glass-border);
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .controls-bar {
+    gap: 14px;
+    padding: 12px 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .controls-bar {
+    gap: 16px;
+    padding: 14px 32px;
+  }
+}
+
+/* ─── Control Buttons ───────────────────────────── */
+.control-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .control-btn {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .control-btn {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+.control-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.control-btn:hover::before {
+  opacity: 1;
+}
+
+.control-btn:active {
+  transform: scale(0.92);
+}
+
+.control-btn-default {
+  background: var(--color-dark-500);
+}
+
+.control-btn-danger {
+  background: var(--color-accent-red);
+}
+
+.control-btn-active {
+  background: var(--color-accent-blue);
+}
+
+.control-btn-muted {
+  background: var(--color-accent-red);
+}
+
+.control-btn-leave {
+  width: 56px;
+  border-radius: 16px;
+}
+
+@media (min-width: 640px) {
+  .control-btn-leave {
+    width: 68px;
+    border-radius: 20px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   CHAT PANEL
+   ═══════════════════════════════════════════════════ */
+
+/* Desktop: chat panel sits beside video area using flexbox */
+.chat-panel-container {
+  flex-shrink: 0;
+  width: 0;
+  overflow: hidden;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+}
+
+.chat-panel-container.chat-container-open {
+  width: 360px;
+}
+
+/* Mobile: chat overlays fullscreen */
+@media (max-width: 767px) {
+  .chat-panel-container {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    z-index: 30;
+    pointer-events: none;
+    transition: none;
+  }
+
+  .chat-panel-container.chat-container-open {
+    width: 100% !important;
+    pointer-events: auto;
+  }
+}
+
+/* Mobile backdrop — visible on screens < 768px */
+.chat-backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .chat-backdrop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 25;
+    animation: fadeIn 0.2s ease-out;
+  }
+}
+
+.chat-panel {
+  width: 100%;
+  height: 100%;
+  background: rgba(18, 18, 26, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid var(--color-glass-border);
+  display: flex;
+  flex-direction: column;
+  animation: slideInPanel 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* On mobile, chat takes full width with solid background */
+@media (max-width: 767px) {
+  .chat-panel {
+    background: var(--color-dark-800);
+    border-left: none;
+  }
+}
+
+/* ─── Chat Styles ───────────────────────────────── */
+.chat-bubble {
+  max-width: 85%;
+  padding: 8px 14px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.chat-bubble-self {
+  background: var(--color-accent-blue);
+  color: white;
+  border-bottom-right-radius: 4px;
+  margin-left: auto;
+}
+
+.chat-bubble-other {
+  background: var(--color-dark-600);
+  color: #e2e8f0;
+  border-bottom-left-radius: 4px;
+}
+
+/* ═══════════════════════════════════════════════════
+   TOOLTIPS
+   ═══════════════════════════════════════════════════ */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-dark-600);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 50;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+}
+
+/* Hide tooltips on touch devices */
+@media (hover: none) {
+  .tooltip::after {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   INPUT & BUTTON STYLES
+   ═══════════════════════════════════════════════════ */
+.input-modern {
+  background: var(--color-dark-700);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  outline: none;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .input-modern {
+    padding: 14px 18px;
+    font-size: 1rem;
+  }
+}
+
+.input-modern::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.input-modern:focus {
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.15);
+}
+
+/* ─── Button Styles ─────────────────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-accent-blue), var(--color-accent-purple));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .btn-primary {
+    padding: 14px 32px;
+    font-size: 1rem;
+  }
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(66, 133, 244, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--color-dark-600);
+  color: white;
+  border: 1px solid var(--color-glass-border);
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .btn-secondary {
+    padding: 14px 32px;
+    font-size: 1rem;
+  }
+}
+
+.btn-secondary:hover {
+  background: var(--color-dark-500);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* ─── Notification Badge ────────────────────────── */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  background: var(--color-accent-red);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: white;
+  animation: fadeIn 0.2s ease-out;
+  border: 2px solid var(--color-dark-900);
+}
+
+@media (min-width: 640px) {
+  .notification-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 0.65rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   HOME PAGE RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+
+/* Keep the hero + form side by side on lg, stack on mobile */
+@media (max-width: 1023px) {
+  .home-hero-title {
+    font-size: 2.5rem !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .home-hero-title {
+    font-size: 2rem !important;
+  }
+}
